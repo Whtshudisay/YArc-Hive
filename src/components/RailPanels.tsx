@@ -105,7 +105,7 @@ export default function RailPanels({ view, nodes, onOpenNode }: Props) {
     <div className="absolute inset-0 z-10 overflow-auto bg-canvas pl-24 pr-8 pt-24 pb-8">
       <div className="mx-auto max-w-3xl">
         <h2 className="font-serif text-4xl font-medium text-ink">{title}</h2>
-        <p className="mt-2 font-mono text-[11px] uppercase tracking-wide text-neutral-500">
+        <p className="mt-2 font-mono text-[11px] uppercase tracking-wide text-muted">
           {view === "library" && "Books and films in your collection"}
           {view === "search" && "Find anything on the canvas"}
           {view === "archive" && "Full catalog of saved entries"}
@@ -114,7 +114,7 @@ export default function RailPanels({ view, nodes, onOpenNode }: Props) {
         {view === "search" && (
           <input
             autoFocus
-            className="mt-6 w-full border-b border-neutral-300 bg-transparent py-3 font-serif text-xl outline-none"
+            className="mt-6 w-full border-b border-outline bg-transparent py-3 font-serif text-xl outline-none"
             placeholder="Search notes, books, films…"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
@@ -134,7 +134,7 @@ export default function RailPanels({ view, nodes, onOpenNode }: Props) {
 
         <ul className="mt-8 space-y-2">
           {items.length === 0 && (
-            <li className="rounded-lg border border-dashed border-neutral-300 bg-white/60 px-4 py-8 text-center font-mono text-xs text-neutral-500">
+            <li className="rounded-lg border border-dashed border-outline bg-card/60 px-4 py-8 text-center font-mono text-xs text-muted">
               {view === "library"
                 ? "No books or films yet — use + Add Book or + Log Film."
                 : view === "search"
@@ -148,10 +148,10 @@ export default function RailPanels({ view, nodes, onOpenNode }: Props) {
             <li key={item.nodeId}>
               <button
                 type="button"
-                className="flex w-full items-center gap-4 rounded-lg border border-neutral-200/80 bg-white p-3 text-left shadow-card transition hover:border-neutral-800 hover:shadow-card-hover"
+                className="flex w-full items-center gap-4 rounded-lg border border-outline/50 bg-card p-3 text-left shadow-card transition hover:border-ink hover:shadow-card-hover"
                 onClick={() => onOpenNode(item.nodeId)}
               >
-                <div className="h-14 w-11 shrink-0 overflow-hidden rounded bg-neutral-100">
+                <div className="h-14 w-11 shrink-0 overflow-hidden rounded bg-surface-low">
                   {item.thumb ? (
                     <img
                       src={item.thumb}
@@ -159,22 +159,22 @@ export default function RailPanels({ view, nodes, onOpenNode }: Props) {
                       className="h-full w-full object-cover"
                     />
                   ) : (
-                    <div className="flex h-full items-center justify-center font-mono text-[9px] uppercase text-neutral-400">
+                    <div className="flex h-full items-center justify-center font-mono text-[9px] uppercase text-muted">
                       {item.kind.slice(0, 4)}
                     </div>
                   )}
                 </div>
                 <div className="min-w-0 flex-1">
-                  <div className="truncate font-serif text-lg text-neutral-900">
+                  <div className="truncate font-serif text-lg text-ink">
                     {item.title}
                   </div>
-                  <div className="mt-0.5 truncate font-mono text-[11px] text-neutral-500">
+                  <div className="mt-0.5 truncate font-mono text-[11px] text-muted">
                     {item.kind}
                     {item.subtitle ? ` · ${item.subtitle}` : ""}
                     {item.status ? ` · ${item.status}` : ""}
                   </div>
                 </div>
-                <span className="material-symbols-outlined text-neutral-400">
+                <span className="material-symbols-outlined text-muted">
                   north_east
                 </span>
               </button>

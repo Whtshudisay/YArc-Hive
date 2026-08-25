@@ -23,7 +23,7 @@ export default function NoteNode({ id, data }: NodeProps<Node<NoteNodeData>>) {
         }
       />
       <textarea
-        className="nodrag nowheel mt-3 h-28 w-full resize-none bg-transparent font-serif text-base italic leading-relaxed text-neutral-600 outline-none"
+        className="nodrag nowheel mt-3 h-28 w-full resize-none bg-transparent font-serif text-base italic leading-relaxed text-muted outline-none"
         value={data.note.content}
         placeholder="Start typing..."
         onChange={(e) =>
@@ -41,7 +41,7 @@ export default function NoteNode({ id, data }: NodeProps<Node<NoteNodeData>>) {
       )}
       <button
         type="button"
-        className="mt-4 font-mono text-[10px] uppercase tracking-wide text-neutral-400 hover:text-ink"
+        className="mt-4 font-mono text-[10px] uppercase tracking-wide text-muted hover:text-ink"
         onClick={() => actions.deleteNode(id)}
       >
         Remove

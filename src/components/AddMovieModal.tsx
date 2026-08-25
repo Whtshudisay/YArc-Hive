@@ -84,11 +84,11 @@ export default function AddMovieModal({ open, onClose, onLog }: Props) {
 
   return (
     <div className="absolute inset-0 z-40 flex items-center justify-center bg-black/20 p-6">
-      <div className="flex max-h-[85vh] w-full max-w-xl flex-col overflow-hidden rounded-lg border border-neutral-200 bg-white p-6 shadow-xl">
+      <div className="flex max-h-[85vh] w-full max-w-xl flex-col overflow-hidden rounded-lg border border-outline/50 bg-card p-6 shadow-xl">
         <div className="flex items-start justify-between gap-3">
           <div>
-            <h2 className="font-serif text-2xl text-neutral-900">Log a Film</h2>
-            <p className="mt-1 font-mono text-[10px] uppercase tracking-wide text-neutral-500">
+            <h2 className="font-serif text-2xl text-ink">Log a Film</h2>
+            <p className="mt-1 font-mono text-[10px] uppercase tracking-wide text-muted">
               {selected ? "Step 2 · Details" : "Step 1 · Search TMDB"}
             </p>
           </div>
@@ -98,18 +98,18 @@ export default function AddMovieModal({ open, onClose, onLog }: Props) {
         </div>
 
         {!configured && (
-          <div className="mt-4 rounded-md border border-neutral-200 bg-neutral-50 p-4">
-            <p className="font-serif text-base text-neutral-800">
+          <div className="mt-4 rounded-md border border-outline/50 bg-surface-low p-4">
+            <p className="font-serif text-base text-ink">
               TMDB API key required
             </p>
-            <p className="mt-2 font-mono text-xs leading-relaxed text-neutral-600">
-              Create a <span className="text-neutral-900">.env</span> file in the
+            <p className="mt-2 font-mono text-xs leading-relaxed text-muted">
+              Create a <span className="text-ink">.env</span> file in the
               project root with:
             </p>
-            <pre className="mt-3 overflow-x-auto rounded bg-neutral-900 px-3 py-2 font-mono text-[11px] text-white">
+            <pre className="mt-3 overflow-x-auto rounded bg-surface-low px-3 py-2 font-mono text-[11px] text-ink">
               VITE_TMDB_API_KEY=your_key_here
             </pre>
-            <p className="mt-2 font-mono text-[10px] text-neutral-500">
+            <p className="mt-2 font-mono text-[10px] text-muted">
               Restart `npm run tauri dev` after saving. Get a key at themoviedb.org.
             </p>
           </div>
@@ -120,7 +120,7 @@ export default function AddMovieModal({ open, onClose, onLog }: Props) {
             <div className="mt-4 flex gap-2">
               <input
                 autoFocus
-                className="flex-1 border-b border-neutral-300 bg-transparent py-2 font-serif text-lg outline-none"
+                className="flex-1 border-b border-outline bg-transparent py-2 font-serif text-lg outline-none"
                 placeholder="Search movies…"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
@@ -147,19 +147,19 @@ export default function AddMovieModal({ open, onClose, onLog }: Props) {
                   <li key={movie.id}>
                     <button
                       type="button"
-                      className="flex w-full items-center gap-3 rounded-md border border-neutral-100 p-2 text-left hover:border-neutral-800"
+                      className="flex w-full items-center gap-3 rounded-md border border-outline/40 p-2 text-left hover:border-ink"
                       onClick={() => setSelected(movie)}
                     >
                       <img
                         src={getPosterUrl(movie.poster_path, "w342")}
                         alt=""
-                        className="h-16 w-11 rounded-sm object-cover bg-neutral-100"
+                        className="h-16 w-11 rounded-sm object-cover bg-surface-low"
                       />
                       <div className="min-w-0">
-                        <div className="truncate font-serif text-base text-neutral-900">
+                        <div className="truncate font-serif text-base text-ink">
                           {movie.title}
                         </div>
-                        <div className="font-mono text-[11px] text-neutral-500">
+                        <div className="font-mono text-[11px] text-muted">
                           {y}
                           {movie.vote_average
                             ? ` · ★ ${movie.vote_average.toFixed(1)}`
@@ -171,7 +171,7 @@ export default function AddMovieModal({ open, onClose, onLog }: Props) {
                 );
               })}
               {!loading && query.trim().length >= 2 && results.length === 0 && !error && (
-                <li className="font-mono text-xs text-neutral-500">No results</li>
+                <li className="font-mono text-xs text-muted">No results</li>
               )}
             </ul>
           </>
@@ -181,7 +181,7 @@ export default function AddMovieModal({ open, onClose, onLog }: Props) {
           <div className="mt-4 flex min-h-0 flex-1 flex-col gap-4 overflow-auto">
             <button
               type="button"
-              className="self-start font-mono text-[10px] uppercase tracking-wide text-neutral-500 hover:text-neutral-900"
+              className="self-start font-mono text-[10px] uppercase tracking-wide text-muted hover:text-ink"
               onClick={() => setSelected(null)}
             >
               ← Back to search
@@ -190,20 +190,20 @@ export default function AddMovieModal({ open, onClose, onLog }: Props) {
               <img
                 src={getPosterUrl(selected.poster_path, "w500")}
                 alt=""
-                className="h-48 w-32 shrink-0 rounded-md object-cover bg-neutral-100 shadow-sm"
+                className="h-48 w-32 shrink-0 rounded-md object-cover bg-surface-low shadow-sm"
               />
               <div className="min-w-0 flex-1">
-                <h3 className="font-serif text-2xl leading-tight text-neutral-900">
+                <h3 className="font-serif text-2xl leading-tight text-ink">
                   {selected.title}
                 </h3>
-                <p className="mt-1 font-mono text-[11px] text-neutral-500">
+                <p className="mt-1 font-mono text-[11px] text-muted">
                   {year || "Year unknown"}
                   {selected.vote_average
                     ? ` · TMDB ★ ${selected.vote_average.toFixed(1)}`
                     : ""}
                 </p>
                 {selected.overview && (
-                  <p className="mt-3 line-clamp-5 font-serif text-sm italic leading-relaxed text-neutral-600">
+                  <p className="mt-3 line-clamp-5 font-serif text-sm italic leading-relaxed text-muted">
                     {selected.overview}
                   </p>
                 )}
@@ -217,8 +217,8 @@ export default function AddMovieModal({ open, onClose, onLog }: Props) {
                   type="button"
                   className={`rounded-full border px-3 py-1 font-mono text-xs uppercase tracking-wide ${
                     status === value
-                      ? "border-neutral-900 bg-neutral-900 text-white"
-                      : "border-neutral-800 text-neutral-800"
+                      ? "border-ink bg-ink text-card"
+                      : "border-ink text-ink"
                   }`}
                   onClick={() => setStatus(value)}
                 >
@@ -228,7 +228,7 @@ export default function AddMovieModal({ open, onClose, onLog }: Props) {
             </div>
 
             <div>
-              <div className="font-mono text-[10px] uppercase tracking-wide text-neutral-500">
+              <div className="font-mono text-[10px] uppercase tracking-wide text-muted">
                 Your rating
               </div>
               <div className="mt-1 flex gap-1">
@@ -237,7 +237,7 @@ export default function AddMovieModal({ open, onClose, onLog }: Props) {
                     key={star}
                     type="button"
                     className={`text-lg ${
-                      star <= rating ? "text-neutral-900" : "text-neutral-300"
+                      star <= rating ? "text-ink" : "text-muted/50"
                     }`}
                     onClick={() => setRating(star === rating ? 0 : star)}
                     aria-label={`${star} stars`}
@@ -249,11 +249,11 @@ export default function AddMovieModal({ open, onClose, onLog }: Props) {
             </div>
 
             <label className="block">
-              <span className="font-mono text-[10px] uppercase tracking-wide text-neutral-500">
+              <span className="font-mono text-[10px] uppercase tracking-wide text-muted">
                 Takeaways / annotations
               </span>
               <textarea
-                className="mt-2 h-28 w-full resize-none rounded-md border border-neutral-200 bg-neutral-50 p-3 font-mono text-xs leading-relaxed outline-none focus:border-neutral-800"
+                className="mt-2 h-28 w-full resize-none rounded-md border border-outline/50 bg-surface-low p-3 font-mono text-xs leading-relaxed outline-none focus:border-ink"
                 placeholder="Markdown notes…"
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
@@ -266,7 +266,7 @@ export default function AddMovieModal({ open, onClose, onLog }: Props) {
               </button>
               <button
                 type="button"
-                className="rounded-full bg-neutral-900 px-4 py-1.5 font-mono text-xs text-white"
+                className="rounded-full bg-ink px-4 py-1.5 font-mono text-xs text-card"
                 onClick={() => {
                   onLog({
                     tmdb_id: selected.id,

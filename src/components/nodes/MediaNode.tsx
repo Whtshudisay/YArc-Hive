@@ -64,7 +64,7 @@ export default function MediaNode({ id, data }: NodeProps<Node<MediaNodeData>>) 
                   href={media.url}
                   target="_blank"
                   rel="noreferrer"
-                  className="mt-1 text-neutral-500"
+                  className="mt-1 text-muted"
                 >
                   <span className="material-symbols-outlined text-sm">open_in_new</span>
                 </a>
@@ -75,7 +75,7 @@ export default function MediaNode({ id, data }: NodeProps<Node<MediaNodeData>>) 
             </span>
             <button
               type="button"
-              className="mt-4 flex items-center gap-1 border-t border-outline/40 pt-3 font-mono text-[11px] text-neutral-500"
+              className="mt-4 flex items-center gap-1 border-t border-outline/40 pt-3 font-mono text-[11px] text-muted"
               onClick={() => setOpen((v) => !v)}
             >
               <span
@@ -111,18 +111,18 @@ export default function MediaNode({ id, data }: NodeProps<Node<MediaNodeData>>) 
                 className="aspect-[2/3] w-full object-cover"
               />
             ) : (
-              <div className="flex aspect-[2/3] items-center justify-center font-mono text-[10px] text-neutral-500">
+              <div className="flex aspect-[2/3] items-center justify-center font-mono text-[10px] text-muted">
                 POSTER
               </div>
             )}
           </div>
-          <p className="font-mono text-[10px] uppercase tracking-widest text-neutral-500">
+          <p className="font-mono text-[10px] uppercase tracking-widest text-muted">
             {[meta.year, media.genre].filter(Boolean).join(" • ")}
           </p>
           <h3 className="mt-1 font-serif text-[28px] font-medium leading-tight text-ink">
             {media.title}
           </h3>
-          <p className="mt-1 font-sans text-sm text-neutral-500">
+          <p className="mt-1 font-sans text-sm text-muted">
             {media.creator_or_author ? `Dir. ${media.creator_or_author}` : "Director unknown"}
           </p>
           <div className="mt-3 flex justify-center gap-0.5 text-ink">
@@ -158,12 +158,12 @@ export default function MediaNode({ id, data }: NodeProps<Node<MediaNodeData>>) 
 
       {(kind === "article" || kind === "substack" || kind === "generic") && (
         <div className="p-6">
-          <div className="flex items-center justify-between gap-2 font-mono text-[11px] uppercase tracking-wide text-neutral-500">
+          <div className="flex items-center justify-between gap-2 font-mono text-[11px] uppercase tracking-wide text-muted">
             <span className="flex items-center gap-1">
               <span className="material-symbols-outlined text-sm">article</span>
               {media.creator_or_author || meta.site_name || "WEB"}
             </span>
-            <span className="rounded bg-[#e8e8e8] px-2 py-1 text-[10px] text-neutral-600">
+            <span className="rounded bg-[#e8e8e8] px-2 py-1 text-[10px] text-muted">
               {readMinutes(excerpt || media.title)} MIN READ
             </span>
           </div>
@@ -171,7 +171,7 @@ export default function MediaNode({ id, data }: NodeProps<Node<MediaNodeData>>) 
             {media.title}
           </h3>
           {excerpt && (
-            <blockquote className="mt-4 border-l-2 border-outline pl-4 font-serif text-base italic leading-relaxed text-neutral-600">
+            <blockquote className="mt-4 border-l-2 border-outline pl-4 font-serif text-base italic leading-relaxed text-muted">
               {excerpt.slice(0, 220)}
             </blockquote>
           )}
@@ -197,11 +197,11 @@ export default function MediaNode({ id, data }: NodeProps<Node<MediaNodeData>>) 
                 className="h-full w-full object-cover"
               />
             ) : (
-              <div className="flex h-full items-center justify-center font-mono text-[10px] text-neutral-500">
+              <div className="flex h-full items-center justify-center font-mono text-[10px] text-muted">
                 VISUAL
               </div>
             )}
-            <div className="absolute left-3 top-3 flex items-center gap-1 rounded bg-white/90 px-2 py-1 font-mono text-[11px] text-ink shadow-sm backdrop-blur">
+            <div className="absolute left-3 top-3 flex items-center gap-1 rounded bg-card/90 px-2 py-1 font-mono text-[11px] text-ink shadow-sm backdrop-blur">
               <span className="material-symbols-outlined text-sm">play_circle</span>
               @{media.creator_or_author || "creator"}
             </div>
@@ -233,7 +233,7 @@ export default function MediaNode({ id, data }: NodeProps<Node<MediaNodeData>>) 
         <div className="border-t border-outline/30 px-4 py-2">
           <button
             type="button"
-            className="font-mono text-[10px] uppercase tracking-wide text-neutral-400 hover:text-ink"
+            className="font-mono text-[10px] uppercase tracking-wide text-muted hover:text-ink"
             onClick={() => actions.deleteNode(id)}
           >
             Remove
@@ -244,7 +244,7 @@ export default function MediaNode({ id, data }: NodeProps<Node<MediaNodeData>>) 
         <div className="px-4 pb-3">
           <button
             type="button"
-            className="font-mono text-[10px] uppercase tracking-wide text-neutral-400 hover:text-ink"
+            className="font-mono text-[10px] uppercase tracking-wide text-muted hover:text-ink"
             onClick={() => actions.deleteNode(id)}
           >
             Remove

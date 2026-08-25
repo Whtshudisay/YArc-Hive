@@ -1,4 +1,5 @@
 import type { FilterId, RailView } from "../types";
+import type { ThemeMode } from "../lib/theme";
 
 const FILTERS: { id: FilterId; label: string }[] = [
   { id: "all", label: "All" },
@@ -13,6 +14,8 @@ const FILTERS: { id: FilterId; label: string }[] = [
 type Props = {
   view: RailView;
   filter: FilterId;
+  theme: ThemeMode;
+  onToggleTheme: () => void;
   onFilter: (id: FilterId) => void;
   onAddNote: () => void;
   onAddBook: () => void;
@@ -24,6 +27,8 @@ type Props = {
 export default function HeaderBar({
   view,
   filter,
+  theme,
+  onToggleTheme,
   onFilter,
   onAddNote,
   onAddBook,
@@ -38,7 +43,7 @@ export default function HeaderBar({
           Archive
         </h1>
         {view === "graph" ? (
-          <nav className="pointer-events-auto flex items-center gap-1 rounded-full border border-outline/60 bg-white/85 px-4 py-2 shadow-sm backdrop-blur-md">
+          <nav className="pointer-events-auto flex items-center gap-1 rounded-full border border-outline/60 bg-card/90 px-4 py-2 shadow-sm backdrop-blur-md">
             {FILTERS.map((item) => (
               <button
                 key={item.id}
@@ -47,7 +52,7 @@ export default function HeaderBar({
                 className={`px-3 py-1 font-sans text-sm transition-colors ${
                   filter === item.id
                     ? "border-b-2 border-ink font-semibold text-ink"
-                    : "text-neutral-500 hover:text-ink"
+                    : "text-muted hover:text-ink"
                 }`}
               >
                 {item.label}
@@ -55,13 +60,20 @@ export default function HeaderBar({
             ))}
           </nav>
         ) : (
-          <div className="pointer-events-none font-mono text-[11px] uppercase tracking-widest text-neutral-400">
+          <div className="pointer-events-none font-mono text-[11px] uppercase tracking-widest text-muted">
             {view}
           </div>
         )}
-        <div className="pointer-events-auto flex items-center gap-3 text-neutral-500">
-          <button type="button" className="hover:text-ink" title="Grid">
-            <span className="material-symbols-outlined">grid_view</span>
+        <div className="pointer-events-auto flex items-center gap-3 text-muted">
+          <button
+            type="button"
+            className="hover:text-ink"
+            title={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+            onClick={onToggleTheme}
+          >
+            <span className="material-symbols-outlined">
+              {theme === "dark" ? "light_mode" : "dark_mode"}
+            </span>
           </button>
           <button type="button" className="hover:text-ink" title="Settings">
             <span className="material-symbols-outlined">settings</span>

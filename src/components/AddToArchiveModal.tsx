@@ -69,15 +69,15 @@ export default function AddToArchiveModal({
 
   return (
     <div className="absolute inset-0 z-40 flex items-center justify-center bg-black/15 p-6 backdrop-blur-[2px]">
-      <div className="flex max-h-[85vh] w-full max-w-4xl overflow-hidden rounded-xl border border-outline/40 bg-white shadow-card-hover">
+      <div className="flex max-h-[85vh] w-full max-w-4xl overflow-hidden rounded-xl border border-outline/40 bg-card shadow-card-hover">
         <div className="w-[240px] shrink-0 border-r border-outline/30 bg-surface-low p-6">
           <div className="mb-6 flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-full border border-outline bg-white font-serif text-sm">
+            <div className="flex h-9 w-9 items-center justify-center rounded-full border border-outline bg-card font-serif text-sm">
               ◈
             </div>
             <div>
               <div className="font-serif text-xl leading-none text-ink">Workspace</div>
-              <div className="mt-1 font-mono text-[10px] uppercase tracking-widest text-neutral-500">
+              <div className="mt-1 font-mono text-[10px] uppercase tracking-widest text-muted">
                 Personal Archive
               </div>
             </div>
@@ -85,7 +85,7 @@ export default function AddToArchiveModal({
           <h2 className="font-serif text-[32px] font-medium leading-tight text-ink">
             Add to Archive
           </h2>
-          <p className="mt-2 font-mono text-[10px] uppercase tracking-wide text-neutral-500">
+          <p className="mt-2 font-mono text-[10px] uppercase tracking-wide text-muted">
             Select a media type to create a new entry.
           </p>
           <div className="mt-6 space-y-2">
@@ -96,16 +96,16 @@ export default function AddToArchiveModal({
                 onClick={() => setKind(item.id)}
                 className={`flex w-full items-start gap-3 rounded-lg border px-3 py-3 text-left transition-colors ${
                   kind === item.id
-                    ? "border-ink bg-white shadow-card"
-                    : "border-transparent hover:bg-white/70"
+                    ? "border-ink bg-card shadow-card"
+                    : "border-transparent hover:bg-card/70"
                 }`}
               >
-                <span className="material-symbols-outlined mt-0.5 text-neutral-600">
+                <span className="material-symbols-outlined mt-0.5 text-muted">
                   {item.icon}
                 </span>
                 <span>
                   <div className="font-serif text-base text-ink">{item.title}</div>
-                  <div className="font-mono text-[10px] text-neutral-500">{item.hint}</div>
+                  <div className="font-mono text-[10px] text-muted">{item.hint}</div>
                 </span>
               </button>
             ))}
@@ -115,13 +115,13 @@ export default function AddToArchiveModal({
           {kind === "note" && (
             <>
               <input
-                className="w-full bg-transparent font-serif text-[32px] font-medium text-ink outline-none placeholder:text-neutral-300"
+                className="w-full bg-transparent font-serif text-[32px] font-medium text-ink outline-none placeholder:text-muted/50"
                 placeholder="Untitled Note"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
               />
               <textarea
-                className="mt-4 flex-1 resize-none bg-transparent font-serif text-lg italic leading-relaxed text-neutral-600 outline-none placeholder:not-italic placeholder:text-neutral-300"
+                className="mt-4 flex-1 resize-none bg-transparent font-serif text-lg italic leading-relaxed text-muted outline-none placeholder:not-italic placeholder:text-muted/50"
                 placeholder="Start typing..."
                 value={body}
                 onChange={(e) => setBody(e.target.value)}
@@ -215,7 +215,7 @@ function Field({
 }) {
   return (
     <label className="block">
-      <span className="font-mono text-[10px] uppercase tracking-wide text-neutral-500">
+      <span className="font-mono text-[10px] uppercase tracking-wide text-muted">
         {label}
       </span>
       <input

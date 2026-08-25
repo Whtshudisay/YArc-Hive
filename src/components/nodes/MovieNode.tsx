@@ -22,10 +22,10 @@ export default function MovieNode({ id, data }: NodeProps<Node<MovieNodeData>>) 
   };
 
   return (
-    <article className="w-[260px] overflow-hidden rounded-md border border-neutral-200/80 bg-white shadow-md">
+    <article className="w-[260px] overflow-hidden rounded-md border border-outline/50 bg-card shadow-md">
       <Handle type="target" position={Position.Top} className="archive-handle" />
 
-      <div className="relative aspect-[2/3] bg-neutral-100">
+      <div className="relative aspect-[2/3] bg-surface-low">
         {media.cover_image_url ? (
           <img
             src={media.cover_image_url}
@@ -33,7 +33,7 @@ export default function MovieNode({ id, data }: NodeProps<Node<MovieNodeData>>) 
             className="h-full w-full object-cover"
           />
         ) : (
-          <div className="flex h-full items-center justify-center font-mono text-[10px] text-neutral-500">
+          <div className="flex h-full items-center justify-center font-mono text-[10px] text-muted">
             NO POSTER
           </div>
         )}
@@ -46,7 +46,7 @@ export default function MovieNode({ id, data }: NodeProps<Node<MovieNodeData>>) 
             {status === "watched" ? "Watched" : "Wishlist"}
           </button>
           {year && (
-            <span className="rounded-full border border-white/70 bg-white/90 px-2 py-0.5 font-mono text-[10px] text-neutral-800">
+            <span className="rounded-full border border-white/70 bg-card/90 px-2 py-0.5 font-mono text-[10px] text-ink">
               {year}
             </span>
           )}
@@ -54,11 +54,11 @@ export default function MovieNode({ id, data }: NodeProps<Node<MovieNodeData>>) 
       </div>
 
       <div className="p-4">
-        <h3 className="font-serif text-xl font-medium leading-tight text-neutral-900">
+        <h3 className="font-serif text-xl font-medium leading-tight text-ink">
           {media.title}
         </h3>
         {(media.creator_or_author || meta.overview) && (
-          <p className="mt-2 line-clamp-3 font-serif text-sm italic leading-relaxed text-neutral-600">
+          <p className="mt-2 line-clamp-3 font-serif text-sm italic leading-relaxed text-muted">
             {media.creator_or_author
               ? `Dir. ${media.creator_or_author}`
               : meta.overview}
@@ -71,7 +71,7 @@ export default function MovieNode({ id, data }: NodeProps<Node<MovieNodeData>>) 
               key={star}
               type="button"
               className={`nodrag text-sm ${
-                star <= rating ? "text-neutral-900" : "text-neutral-300"
+                star <= rating ? "text-ink" : "text-muted/50"
               }`}
               onClick={() =>
                 actions.updateMedia(media.id, {
@@ -87,7 +87,7 @@ export default function MovieNode({ id, data }: NodeProps<Node<MovieNodeData>>) 
 
         <button
           type="button"
-          className="mt-3 flex items-center gap-1 font-mono text-[10px] uppercase tracking-wide text-neutral-500"
+          className="mt-3 flex items-center gap-1 font-mono text-[10px] uppercase tracking-wide text-muted"
           onClick={() => setOpen((v) => !v)}
         >
           <span
@@ -101,7 +101,7 @@ export default function MovieNode({ id, data }: NodeProps<Node<MovieNodeData>>) 
         </button>
         {open && (
           <textarea
-            className="nodrag nowheel mt-2 h-20 w-full resize-none rounded border border-neutral-200 bg-neutral-50 p-2 font-mono text-[11px] outline-none"
+            className="nodrag nowheel mt-2 h-20 w-full resize-none rounded border border-outline/50 bg-surface-low p-2 font-mono text-[11px] outline-none"
             value={media.notes_markdown}
             placeholder="Takeaways…"
             onChange={(e) =>
@@ -112,7 +112,7 @@ export default function MovieNode({ id, data }: NodeProps<Node<MovieNodeData>>) 
 
         <button
           type="button"
-          className="mt-3 block font-mono text-[10px] uppercase tracking-wide text-neutral-400 hover:text-neutral-800"
+          className="mt-3 block font-mono text-[10px] uppercase tracking-wide text-muted hover:text-ink"
           onClick={() => actions.deleteNode(id)}
         >
           Remove

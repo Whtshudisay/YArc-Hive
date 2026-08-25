@@ -13,7 +13,7 @@ import {
   type Node,
 } from "@xyflow/react";
 import { open } from "@tauri-apps/plugin-dialog";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import AddMovieModal from "./components/AddMovieModal";
 import AddToArchiveModal from "./components/AddToArchiveModal";
 import DropUrlModal from "./components/DropUrlModal";
@@ -43,6 +43,7 @@ import {
   updateNote,
 } from "./lib/db";
 import { parseMovieMeta } from "./lib/movie-meta";
+import { useTheme } from "./lib/theme";
 import { fetchUrlMetadata, isTauri, parseAppleNotesExport } from "./lib/tauri";
 import type {
   ArchiveNodeData,
@@ -55,11 +56,28 @@ import type {
 } from "./types";
 import "@xyflow/react/dist/style.css";
 
-const EDGE_STYLE = {
-  stroke: "#404040",
-  strokeWidth: 1.75,
-  strokeDasharray: "5 4",
-};
+function canvasEdgeStyle(): CSSProperties {
+  const stroke =
+    typeof document !== "undefined"
+      ? getComputedStyle(document.documentElement)
+          .getPropertyValue("--edge-stroke")
+          .trim() || "#404040"
+      : "#404040";
+  return {
+    stroke,
+    strokeWidth: 1.75,
+    strokeDasharray: "5 4",
+  };
+}
+
+function canvasDotColor(): string {
+  if (typeof document === "undefined") return "#c9c8c3";
+  return (
+    getComputedStyle(document.documentElement)
+      .getPropertyValue("--dot-color")
+      .trim() || "#c9c8c3"
+  );
+}
 
 const nodeTypes = {
   note: NoteNode,
@@ -92,9 +110,13 @@ function matchesFilter(node: Node<ArchiveNodeData>, filter: FilterId): boolean {
 function CanvasApp({
   view,
   onViewChange,
+  theme,
+  onToggleTheme,
 }: {
   view: RailView;
   onViewChange: (view: RailView) => void;
+  theme: "light" | "dark";
+  onToggleTheme: () => void;
 }) {
   const { screenToFlowPosition, setCenter, getNode } = useReactFlow();
   const [nodes, setNodes, onNodesChange] = useNodesState<Node<ArchiveNodeData>>([]);
@@ -201,7 +223,9 @@ function CanvasApp({
 
   const onConnect = useCallback(
     (connection: Connection) => {
-      setEdges((eds) => addEdge({ ...connection, style: { ...EDGE_STYLE } }, eds));
+      setEdges((eds) =>
+        addEdge({ ...connection, style: canvasEdgeStyle() }, eds),
+      );
       if (connection.source && connection.target) {
         void saveEdge(connection.source, connection.target);
       }
@@ -325,6 +349,8 @@ function CanvasApp({
         <HeaderBar
           view={view}
           filter={filter}
+          theme={theme}
+          onToggleTheme={onToggleTheme}
           onFilter={setFilter}
           onAddNote={() => setAddOpen(true)}
           onAddBook={() => setBookOpen(true)}
@@ -333,7 +359,7 @@ function CanvasApp({
           onImportNotes={() => void importAppleNotes()}
         />
         {status && (
-          <div className="absolute right-6 top-6 z-30 max-w-sm rounded-full border border-neutral-800 bg-white px-3 py-1 font-mono text-[11px]">
+          <div className="absolute right-6 top-6 z-30 max-w-sm rounded-full border border-ink bg-card px-3 py-1 font-mono text-[11px] text-ink">
             {status}
           </div>
         )}
@@ -342,7 +368,7 @@ function CanvasApp({
             nodes={visibleNodes}
             edges={edges.map((e) => ({
               ...e,
-              style: { ...EDGE_STYLE, ...(e.style ?? {}) },
+              style: { ...canvasEdgeStyle(), ...(e.style ?? {}) },
             }))}
             onNodesChange={onNodesChange}
             onEdgesChange={onEdgesChange}
@@ -357,21 +383,26 @@ function CanvasApp({
             fitView
             minZoom={0.2}
             defaultEdgeOptions={{
-              style: { ...EDGE_STYLE },
+              style: canvasEdgeStyle(),
             }}
+            colorMode={theme}
             proOptions={{ hideAttribution: true }}
           >
             <Background
               variant={BackgroundVariant.Dots}
               gap={22}
               size={1.4}
-              color="#c9c8c3"
+              color={canvasDotColor()}
             />
             <MiniMap
               pannable
               zoomable
-              className="!bg-white/80"
-              maskColor="rgba(232,231,227,0.7)"
+              className="!bg-card/80"
+              maskColor={
+                theme === "dark"
+                  ? "rgba(26,27,27,0.75)"
+                  : "rgba(232,231,227,0.7)"
+              }
             />
           </ReactFlow>
         </div>
@@ -488,13 +519,19 @@ function CanvasApp({
 
 export default function App() {
   const [view, setView] = useState<RailView>("graph");
+  const { theme, toggleTheme } = useTheme();
 
   return (
-    <div className="relative h-screen overflow-hidden bg-canvas">
+    <div className="relative h-screen overflow-hidden bg-canvas text-ink">
       <Sidebar view={view} onViewChange={setView} />
       <div className="absolute inset-0">
         <ReactFlowProvider>
-          <CanvasApp view={view} onViewChange={setView} />
+          <CanvasApp
+            view={view}
+            onViewChange={setView}
+            theme={theme}
+            onToggleTheme={toggleTheme}
+          />
         </ReactFlowProvider>
       </div>
     </div>

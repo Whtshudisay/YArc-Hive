@@ -3,8 +3,36 @@
 @tailwind utilities;
 
 :root {
-  --canvas: #ededed;
-  --ink: #2d2d2d;
+  --color-canvas: 237 237 237;
+  --color-ink: 45 45 45;
+  --color-taupe: 168 159 148;
+  --color-outline: 196 199 199;
+  --color-surface: 249 249 249;
+  --color-surface-low: 244 243 243;
+  --color-card: 255 255 255;
+  --color-muted: 115 115 115;
+  --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.04);
+  --shadow-card-hover: 0 8px 30px rgba(0, 0, 0, 0.08);
+  --edge-stroke: #404040;
+  --dot-color: #c9c8c3;
+  --rf-bg: #ededed;
+}
+
+html.dark {
+  --color-canvas: 26 27 27;
+  --color-ink: 241 241 241;
+  --color-taupe: 156 147 136;
+  --color-outline: 70 72 72;
+  --color-surface: 36 37 37;
+  --color-surface-low: 47 49 49;
+  --color-card: 36 37 37;
+  --color-muted: 163 163 163;
+  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.45);
+  --shadow-card-hover: 0 10px 36px rgba(0, 0, 0, 0.55);
+  --edge-stroke: #a3a3a3;
+  --dot-color: #3f4141;
+  --rf-bg: #1a1b1b;
+  color-scheme: dark;
 }
 
 html,
@@ -15,8 +43,8 @@ body,
 }
 
 body {
-  background: var(--canvas);
-  color: var(--ink);
+  background: rgb(var(--color-canvas));
+  color: rgb(var(--color-ink));
   font-family: Inter, system-ui, sans-serif;
 }
 
@@ -30,29 +58,45 @@ body {
   font-family: inherit;
 }
 
+.react-flow__background {
+  background-color: var(--rf-bg) !important;
+}
+
+.react-flow__minimap {
+  background-color: rgb(var(--color-card) / 0.9) !important;
+}
+
 .react-flow__node.selected .archive-card,
 .archive-card:hover {
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow-card-hover);
 }
 
 @layer components {
   .archive-card {
-    @apply rounded-card border border-outline/40 bg-white shadow-card transition-shadow;
+    @apply rounded-card border border-outline/50 bg-card text-ink shadow-card transition-shadow;
   }
 
   .archive-handle {
-    @apply !h-2.5 !w-2.5 !border !border-outline !bg-white;
+    @apply !h-2.5 !w-2.5 !border !border-outline !bg-card;
   }
 
   .pill {
-    @apply rounded-full border border-ink/80 px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-wide text-ink;
+    @apply rounded-full border border-ink/70 px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-wide text-ink;
   }
 
   .pill-btn {
-    @apply rounded-full border border-ink bg-white px-3 py-1.5 font-mono text-xs text-ink hover:bg-surface-low;
+    @apply rounded-full border border-ink/80 bg-card px-3 py-1.5 font-mono text-xs text-ink hover:bg-surface-low;
   }
 
   .pill-btn-primary {
-    @apply rounded-full bg-ink px-4 py-1.5 font-mono text-xs text-white hover:bg-neutral-800;
+    @apply rounded-full bg-ink px-4 py-1.5 font-mono text-xs text-card hover:opacity-90;
+  }
+
+  .modal-scrim {
+    @apply absolute inset-0 z-40 flex items-center justify-center bg-black/20 p-6 dark:bg-black/55;
+  }
+
+  .modal-panel {
+    @apply rounded-lg border border-outline/50 bg-card text-ink shadow-card-hover;
   }
 }

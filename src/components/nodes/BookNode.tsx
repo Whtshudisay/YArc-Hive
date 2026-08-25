@@ -16,14 +16,14 @@ export default function BookNode({ id, data }: NodeProps<Node<BookNodeData>>) {
         {book.cover_url ? (
           <img src={book.cover_url} alt="" className="h-full w-full object-cover" />
         ) : (
-          <div className="flex h-full items-center justify-center font-mono text-[10px] text-neutral-500">
+          <div className="flex h-full items-center justify-center font-mono text-[10px] text-muted">
             NO COVER
           </div>
         )}
       </div>
       <div className="min-w-0 flex-1">
         <h3 className="font-serif text-xl font-medium leading-tight text-ink">{book.title}</h3>
-        <p className="mt-1 font-mono text-[11px] text-neutral-500">
+        <p className="mt-1 font-mono text-[11px] text-muted">
           {book.author || "Unknown author"}
         </p>
         <button
@@ -58,7 +58,7 @@ export default function BookNode({ id, data }: NodeProps<Node<BookNodeData>>) {
         </div>
         <button
           type="button"
-          className="mt-3 font-mono text-[10px] uppercase tracking-wide text-neutral-500"
+          className="mt-3 font-mono text-[10px] uppercase tracking-wide text-muted"
           onClick={() => setOpen((v) => !v)}
         >
           {open ? "Hide takeaways" : "Takeaways"}
@@ -75,7 +75,7 @@ export default function BookNode({ id, data }: NodeProps<Node<BookNodeData>>) {
         )}
         <button
           type="button"
-          className="mt-2 block font-mono text-[10px] uppercase tracking-wide text-neutral-400 hover:text-ink"
+          className="mt-2 block font-mono text-[10px] uppercase tracking-wide text-muted hover:text-ink"
           onClick={() => actions.deleteNode(id)}
         >
           Remove

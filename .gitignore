@@ -1,0 +1,19 @@
+# Node / Frontend
+node_modules/
+dist/
+.vite/
+
+# Tauri / Rust
+src-tauri/target/
+src-tauri/gen/
+
+# Local databases & environment files
+*.db
+*.db-journal
+*.db-wal
+.env
+.env.local
+
+# OS files
+.DS_Store
+Thumbs.db

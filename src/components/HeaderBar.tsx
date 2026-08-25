@@ -1,4 +1,4 @@
-import type { FilterId } from "../types";
+import type { FilterId, RailView } from "../types";
 
 const FILTERS: { id: FilterId; label: string }[] = [
   { id: "all", label: "All" },
@@ -11,20 +11,24 @@ const FILTERS: { id: FilterId; label: string }[] = [
 ];
 
 type Props = {
+  view: RailView;
   filter: FilterId;
   onFilter: (id: FilterId) => void;
   onAddNote: () => void;
   onAddBook: () => void;
   onDropUrl: () => void;
+  onLogFilm: () => void;
   onImportNotes: () => void;
 };
 
 export default function HeaderBar({
+  view,
   filter,
   onFilter,
   onAddNote,
   onAddBook,
   onDropUrl,
+  onLogFilm,
   onImportNotes,
 }: Props) {
   return (
@@ -33,22 +37,28 @@ export default function HeaderBar({
         <h1 className="font-serif text-[32px] font-medium leading-none tracking-tight text-ink">
           Archive
         </h1>
-        <nav className="pointer-events-auto flex items-center gap-1 rounded-full border border-outline/60 bg-white/85 px-4 py-2 shadow-sm backdrop-blur-md">
-          {FILTERS.map((item) => (
-            <button
-              key={item.id}
-              type="button"
-              onClick={() => onFilter(item.id)}
-              className={`px-3 py-1 font-sans text-sm transition-colors ${
-                filter === item.id
-                  ? "border-b-2 border-ink font-semibold text-ink"
-                  : "text-neutral-500 hover:text-ink"
-              }`}
-            >
-              {item.label}
-            </button>
-          ))}
-        </nav>
+        {view === "graph" ? (
+          <nav className="pointer-events-auto flex items-center gap-1 rounded-full border border-outline/60 bg-white/85 px-4 py-2 shadow-sm backdrop-blur-md">
+            {FILTERS.map((item) => (
+              <button
+                key={item.id}
+                type="button"
+                onClick={() => onFilter(item.id)}
+                className={`px-3 py-1 font-sans text-sm transition-colors ${
+                  filter === item.id
+                    ? "border-b-2 border-ink font-semibold text-ink"
+                    : "text-neutral-500 hover:text-ink"
+                }`}
+              >
+                {item.label}
+              </button>
+            ))}
+          </nav>
+        ) : (
+          <div className="pointer-events-none font-mono text-[11px] uppercase tracking-widest text-neutral-400">
+            {view}
+          </div>
+        )}
         <div className="pointer-events-auto flex items-center gap-3 text-neutral-500">
           <button type="button" className="hover:text-ink" title="Grid">
             <span className="material-symbols-outlined">grid_view</span>
@@ -65,6 +75,9 @@ export default function HeaderBar({
         </button>
         <button type="button" className="pill-btn" onClick={onAddBook}>
           + Add Book
+        </button>
+        <button type="button" className="pill-btn" onClick={onLogFilm}>
+          + Log Film
         </button>
         <button type="button" className="pill-btn" onClick={onDropUrl}>
           + Drop URL

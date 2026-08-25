@@ -14,18 +14,22 @@ import {
 } from "@xyflow/react";
 import { open } from "@tauri-apps/plugin-dialog";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import AddMovieModal from "./components/AddMovieModal";
 import AddToArchiveModal from "./components/AddToArchiveModal";
 import DropUrlModal from "./components/DropUrlModal";
 import HeaderBar from "./components/HeaderBar";
 import OpenLibraryModal from "./components/OpenLibraryModal";
+import RailPanels from "./components/RailPanels";
 import Sidebar from "./components/Sidebar";
 import BookNode from "./components/nodes/BookNode";
 import MediaNode from "./components/nodes/MediaNode";
+import MovieNode from "./components/nodes/MovieNode";
 import NoteNode from "./components/nodes/NoteNode";
 import { ArchiveProvider, type ArchiveActions } from "./lib/archive-context";
 import {
   createBookNode,
   createMediaNode,
+  createMovieNode,
   createNoteNode,
   deleteEdge,
   deleteNode as deleteNodeRow,
@@ -38,6 +42,7 @@ import {
   updateMedia,
   updateNote,
 } from "./lib/db";
+import { parseMovieMeta } from "./lib/movie-meta";
 import { fetchUrlMetadata, isTauri, parseAppleNotesExport } from "./lib/tauri";
 import type {
   ArchiveNodeData,
@@ -46,13 +51,21 @@ import type {
   MediaItem,
   Note,
   OpenLibraryDoc,
+  RailView,
 } from "./types";
 import "@xyflow/react/dist/style.css";
+
+const EDGE_STYLE = {
+  stroke: "#404040",
+  strokeWidth: 1.75,
+  strokeDasharray: "5 4",
+};
 
 const nodeTypes = {
   note: NoteNode,
   book: BookNode,
   media: MediaNode,
+  movieNode: MovieNode,
 };
 
 const URL_RE = /https?:\/\/[^\s]+/i;
@@ -63,8 +76,13 @@ function matchesFilter(node: Node<ArchiveNodeData>, filter: FilterId): boolean {
   if (filter === "notes") return data.itemType === "note";
   if (filter === "books") return data.itemType === "book";
   if (filter === "wishlist") {
-    return data.itemType === "book" && data.book.status === "wishlist";
+    if (data.itemType === "book") return data.book.status === "wishlist";
+    if (data.itemType === "movie") {
+      return (parseMovieMeta(data.media.metadata_json).status ?? "watchlist") === "watchlist";
+    }
+    return false;
   }
+  if (data.itemType === "movie") return filter === "cinema";
   if (data.itemType !== "media") return false;
   if (filter === "videos") return data.media.media_type === "youtube";
   if (filter === "cinema") return data.media.media_type === "movie";
@@ -72,18 +90,20 @@ function matchesFilter(node: Node<ArchiveNodeData>, filter: FilterId): boolean {
 }
 
 function CanvasApp({
-  addOpen,
-  setAddOpen,
+  view,
+  onViewChange,
 }: {
-  addOpen: boolean;
-  setAddOpen: (open: boolean) => void;
+  view: RailView;
+  onViewChange: (view: RailView) => void;
 }) {
-  const { screenToFlowPosition } = useReactFlow();
+  const { screenToFlowPosition, setCenter, getNode } = useReactFlow();
   const [nodes, setNodes, onNodesChange] = useNodesState<Node<ArchiveNodeData>>([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
   const [filter, setFilter] = useState<FilterId>("all");
+  const [addOpen, setAddOpen] = useState(false);
   const [bookOpen, setBookOpen] = useState(false);
   const [urlOpen, setUrlOpen] = useState(false);
+  const [filmOpen, setFilmOpen] = useState(false);
   const [status, setStatus] = useState<string | null>(null);
   const pointer = useRef({ x: 480, y: 240 });
   const noteTimers = useRef(new Map<string, ReturnType<typeof setTimeout>>());
@@ -150,8 +170,16 @@ function CanvasApp({
       updateMedia: (id, patch) => {
         setNodes((curr) =>
           curr.map((n) => {
-            if (n.data.itemType !== "media" || n.data.media.id !== id) return n;
+            if (
+              (n.data.itemType !== "media" && n.data.itemType !== "movie") ||
+              n.data.media.id !== id
+            ) {
+              return n;
+            }
             const media: MediaItem = { ...n.data.media, ...patch };
+            if (n.data.itemType === "movie") {
+              return { ...n, data: { itemType: "movie", media } };
+            }
             return { ...n, data: { itemType: "media", media } };
           }),
         );
@@ -173,14 +201,32 @@ function CanvasApp({
 
   const onConnect = useCallback(
     (connection: Connection) => {
-      setEdges((eds) =>
-        addEdge({ ...connection, style: { strokeDasharray: "4 4" } }, eds),
-      );
+      setEdges((eds) => addEdge({ ...connection, style: { ...EDGE_STYLE } }, eds));
       if (connection.source && connection.target) {
         void saveEdge(connection.source, connection.target);
       }
     },
     [setEdges],
+  );
+
+  const openNodeOnGraph = useCallback(
+    (nodeId: string) => {
+      onViewChange("graph");
+      requestAnimationFrame(() => {
+        const node = getNode(nodeId);
+        if (!node) return;
+        const w = typeof node.measured?.width === "number" ? node.measured.width : 260;
+        const h = typeof node.measured?.height === "number" ? node.measured.height : 320;
+        setCenter(node.position.x + w / 2, node.position.y + h / 2, {
+          zoom: 1.05,
+          duration: 400,
+        });
+        setNodes((curr) =>
+          curr.map((n) => ({ ...n, selected: n.id === nodeId })),
+        );
+      });
+    },
+    [getNode, onViewChange, setCenter, setNodes],
   );
 
   const addMediaFromUrl = useCallback(
@@ -277,11 +323,13 @@ function CanvasApp({
         }}
       >
         <HeaderBar
+          view={view}
           filter={filter}
           onFilter={setFilter}
           onAddNote={() => setAddOpen(true)}
           onAddBook={() => setBookOpen(true)}
           onDropUrl={() => setUrlOpen(true)}
+          onLogFilm={() => setFilmOpen(true)}
           onImportNotes={() => void importAppleNotes()}
         />
         {status && (
@@ -289,39 +337,45 @@ function CanvasApp({
             {status}
           </div>
         )}
-        <ReactFlow
-          nodes={visibleNodes}
-          edges={edges}
-          onNodesChange={onNodesChange}
-          onEdgesChange={onEdgesChange}
-          onConnect={onConnect}
-          nodeTypes={nodeTypes}
-          onNodeDragStop={(_, node) => {
-            saveNodePosition(node.id, node.position.x, node.position.y);
-          }}
-          onEdgesDelete={(deleted) => {
-            deleted.forEach((edge) => void deleteEdge(edge.id));
-          }}
-          fitView
-          minZoom={0.2}
-          defaultEdgeOptions={{
-            style: { stroke: "#a3a3a3", strokeDasharray: "4 4" },
-          }}
-          proOptions={{ hideAttribution: true }}
-        >
-          <Background
-            variant={BackgroundVariant.Dots}
-            gap={22}
-            size={1.4}
-            color="#c9c8c3"
-          />
-          <MiniMap
-            pannable
-            zoomable
-            className="!bg-white/80"
-            maskColor="rgba(232,231,227,0.7)"
-          />
-        </ReactFlow>
+        <div className={view === "graph" ? "h-full w-full" : "pointer-events-none invisible absolute inset-0 h-full w-full"}>
+          <ReactFlow
+            nodes={visibleNodes}
+            edges={edges.map((e) => ({
+              ...e,
+              style: { ...EDGE_STYLE, ...(e.style ?? {}) },
+            }))}
+            onNodesChange={onNodesChange}
+            onEdgesChange={onEdgesChange}
+            onConnect={onConnect}
+            nodeTypes={nodeTypes}
+            onNodeDragStop={(_, node) => {
+              saveNodePosition(node.id, node.position.x, node.position.y);
+            }}
+            onEdgesDelete={(deleted) => {
+              deleted.forEach((edge) => void deleteEdge(edge.id));
+            }}
+            fitView
+            minZoom={0.2}
+            defaultEdgeOptions={{
+              style: { ...EDGE_STYLE },
+            }}
+            proOptions={{ hideAttribution: true }}
+          >
+            <Background
+              variant={BackgroundVariant.Dots}
+              gap={22}
+              size={1.4}
+              color="#c9c8c3"
+            />
+            <MiniMap
+              pannable
+              zoomable
+              className="!bg-white/80"
+              maskColor="rgba(232,231,227,0.7)"
+            />
+          </ReactFlow>
+        </div>
+        <RailPanels view={view} nodes={nodes} onOpenNode={openNodeOnGraph} />
         <AddToArchiveModal
           open={addOpen}
           onClose={() => setAddOpen(false)}
@@ -344,12 +398,58 @@ function CanvasApp({
               (input.media_type === "youtube" || input.media_type === "article")
             ) {
               void addMediaFromUrl(input.url);
+            } else if (input.media_type === "movie") {
+              let year = "";
+              try {
+                year = String(
+                  (JSON.parse(input.metadata_json || "{}") as { year?: string })
+                    .year ?? "",
+                );
+              } catch {
+                year = "";
+              }
+              void createMovieNode(
+                {
+                  title: input.title,
+                  poster_url: input.cover_image_url,
+                  release_year: year,
+                  overview: "",
+                  director: input.creator_or_author,
+                  status: "watchlist",
+                  rating: 0,
+                  notes_markdown: input.notes_markdown,
+                  url: input.url,
+                },
+                flowPos(),
+              ).then((node) => setNodes((curr) => [...curr, node]));
             } else {
               void createMediaNode(input, flowPos()).then((node) =>
                 setNodes((curr) => [...curr, node]),
               );
             }
             setAddOpen(false);
+          }}
+        />
+        <AddMovieModal
+          open={filmOpen}
+          onClose={() => setFilmOpen(false)}
+          onLog={(movie) => {
+            void createMovieNode(
+              {
+                title: movie.title,
+                poster_url: movie.poster_url,
+                release_year: movie.release_year,
+                overview: movie.overview,
+                tmdb_id: movie.tmdb_id,
+                vote_average: movie.vote_average,
+                genre_ids: movie.genre_ids,
+                status: movie.status,
+                rating: movie.rating,
+                notes_markdown: movie.notes_markdown,
+              },
+              flowPos(),
+            ).then((node) => setNodes((curr) => [...curr, node]));
+            setFilmOpen(false);
           }}
         />
         <OpenLibraryModal
@@ -387,14 +487,14 @@ function CanvasApp({
 }
 
 export default function App() {
-  const [addOpen, setAddOpen] = useState(false);
+  const [view, setView] = useState<RailView>("graph");
 
   return (
     <div className="relative h-screen overflow-hidden bg-canvas">
-      <Sidebar onNewEntry={() => setAddOpen(true)} />
+      <Sidebar view={view} onViewChange={setView} />
       <div className="absolute inset-0">
         <ReactFlowProvider>
-          <CanvasApp addOpen={addOpen} setAddOpen={setAddOpen} />
+          <CanvasApp view={view} onViewChange={setView} />
         </ReactFlowProvider>
       </div>
     </div>

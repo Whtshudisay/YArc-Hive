@@ -40,6 +40,13 @@ Release binaries are published by `.github/workflows/release.yml` on `v*` tags.
 
 SQLite file: `sqlite:archive.db` in the OS app data directory (via Tauri SQL plugin). No hardcoded Windows/Linux paths.
 
-## Design
+## TMDB film logging
 
-Visual system follows Athenaeum Minimal (`docs/DESIGN.md`): EB Garamond, Space Mono, Inter, canvas `#EDEDED`, soft paper shadows.
+Copy `.env.example` to `.env` and set your key:
+
+```bash
+cp .env.example .env
+# edit VITE_TMDB_API_KEY=...
+```
+
+Then restart `npm run tauri dev`. Use **+ Log Film** to search TMDB and spawn a cinema card.

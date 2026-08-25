@@ -75,7 +75,28 @@ export type MediaNodeData = {
   media: MediaItem;
 };
 
-export type ArchiveNodeData = NoteNodeData | BookNodeData | MediaNodeData;
+export type MovieWatchStatus = "watched" | "watchlist";
+
+export type MovieMeta = {
+  year?: string;
+  tmdb_id?: number;
+  status?: MovieWatchStatus;
+  rating?: number;
+  overview?: string;
+  vote_average?: number;
+  genre_ids?: number[];
+};
+
+export type MovieNodeData = {
+  itemType: "movie";
+  media: MediaItem;
+};
+
+export type ArchiveNodeData =
+  | NoteNodeData
+  | BookNodeData
+  | MediaNodeData
+  | MovieNodeData;
 
 export type FilterId =
   | "all"
@@ -85,6 +106,8 @@ export type FilterId =
   | "cinema"
   | "articles"
   | "wishlist";
+
+export type RailView = "graph" | "library" | "search" | "archive";
 
 export type MediaMetadata = {
   url: string;

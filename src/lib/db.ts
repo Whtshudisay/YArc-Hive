@@ -126,13 +126,23 @@ function toFlowNodes(
     } else {
       const item = mediaById[row.item_id];
       if (!item) continue;
-      result.push({
-        id: row.id,
-        type: "media",
-        position: { x: row.pos_x, y: row.pos_y },
-        data: { itemType: "media", media: item },
-        style: { width: row.width },
-      });
+      if (item.media_type === "movie") {
+        result.push({
+          id: row.id,
+          type: "movieNode",
+          position: { x: row.pos_x, y: row.pos_y },
+          data: { itemType: "movie", media: item },
+          style: { width: row.width || 260 },
+        });
+      } else {
+        result.push({
+          id: row.id,
+          type: "media",
+          position: { x: row.pos_x, y: row.pos_y },
+          data: { itemType: "media", media: item },
+          style: { width: row.width },
+        });
+      }
     }
   }
   return result;
@@ -349,8 +359,17 @@ export async function createMediaNode(
       ],
     );
   }
-  const width = full.media_type === "instagram" || full.media_type === "movie" ? 240 : 300;
+  const width = full.media_type === "instagram" ? 240 : full.media_type === "movie" ? 260 : 300;
   const nodeId = await insertNode("media", full.id, pos, width, 280);
+  if (full.media_type === "movie") {
+    return {
+      id: nodeId,
+      type: "movieNode",
+      position: pos,
+      data: { itemType: "movie", media: full },
+      style: { width },
+    };
+  }
   return {
     id: nodeId,
     type: "media",
@@ -358,6 +377,46 @@ export async function createMediaNode(
     data: { itemType: "media", media: full },
     style: { width },
   };
+}
+
+export async function createMovieNode(
+  input: {
+    title: string;
+    poster_url: string;
+    release_year: string;
+    overview?: string;
+    director?: string;
+    tmdb_id?: number;
+    vote_average?: number;
+    genre_ids?: number[];
+    status: "watched" | "watchlist";
+    rating: number;
+    notes_markdown: string;
+    url?: string;
+  },
+  pos: { x: number; y: number },
+): Promise<Node<ArchiveNodeData>> {
+  return createMediaNode(
+    {
+      media_type: "movie",
+      url: input.url ?? (input.tmdb_id ? `https://www.themoviedb.org/movie/${input.tmdb_id}` : ""),
+      title: input.title,
+      creator_or_author: input.director ?? "",
+      cover_image_url: input.poster_url,
+      genre: "",
+      metadata_json: JSON.stringify({
+        year: input.release_year,
+        tmdb_id: input.tmdb_id,
+        status: input.status,
+        rating: input.rating,
+        overview: input.overview ?? "",
+        vote_average: input.vote_average ?? 0,
+        genre_ids: input.genre_ids ?? [],
+      }),
+      notes_markdown: input.notes_markdown,
+    },
+    pos,
+  );
 }
 
 export async function deleteNode(id: string): Promise<void> {

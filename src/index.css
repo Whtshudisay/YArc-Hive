@@ -3,7 +3,8 @@
 @tailwind utilities;
 
 :root {
-  --canvas: #e8e7e3;
+  --canvas: #ededed;
+  --ink: #2d2d2d;
 }
 
 html,
@@ -15,28 +16,43 @@ body,
 
 body {
   background: var(--canvas);
-  color: #171717;
-  font-family: "Playfair Display", Georgia, serif;
+  color: var(--ink);
+  font-family: Inter, system-ui, sans-serif;
+}
+
+.material-symbols-outlined {
+  font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
+  font-size: 22px;
+  line-height: 1;
 }
 
 .react-flow__node {
   font-family: inherit;
 }
 
+.react-flow__node.selected .archive-card,
+.archive-card:hover {
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+}
+
 @layer components {
   .archive-card {
-    @apply rounded-md border border-neutral-200/80 bg-white shadow-card;
+    @apply rounded-card border border-outline/40 bg-white shadow-card transition-shadow;
   }
 
   .archive-handle {
-    @apply !h-2.5 !w-2.5 !border !border-neutral-400 !bg-white;
+    @apply !h-2.5 !w-2.5 !border !border-outline !bg-white;
   }
 
   .pill {
-    @apply rounded-full border border-neutral-800 px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-wide;
+    @apply rounded-full border border-ink/80 px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-wide text-ink;
   }
 
   .pill-btn {
-    @apply rounded-full border border-neutral-800 bg-white px-3 py-1 font-mono text-xs hover:bg-neutral-50;
+    @apply rounded-full border border-ink bg-white px-3 py-1.5 font-mono text-xs text-ink hover:bg-surface-low;
+  }
+
+  .pill-btn-primary {
+    @apply rounded-full bg-ink px-4 py-1.5 font-mono text-xs text-white hover:bg-neutral-800;
   }
 }

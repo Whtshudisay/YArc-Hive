@@ -4,15 +4,27 @@ export default {
   theme: {
     extend: {
       colors: {
-        canvas: "#E8E7E3",
-        canvasAlt: "#EDEDED",
+        canvas: "#EDEDED",
+        ink: "#2D2D2D",
+        taupe: "#A89F94",
+        outline: "#C4C7C7",
+        surface: "#F9F9F9",
+        "surface-low": "#F4F3F3",
       },
       fontFamily: {
-        serif: ['"Playfair Display"', "Georgia", "serif"],
-        mono: ['"JetBrains Mono"', "ui-monospace", "SFMono-Regular", "monospace"],
+        serif: ['"EB Garamond"', "Georgia", "serif"],
+        sans: ['Inter', "system-ui", "sans-serif"],
+        mono: ['"Space Mono"', "ui-monospace", "monospace"],
       },
       boxShadow: {
-        card: "0 8px 24px rgba(17, 17, 17, 0.08)",
+        card: "0 4px 20px rgba(0, 0, 0, 0.04)",
+        "card-hover": "0 8px 30px rgba(0, 0, 0, 0.08)",
+      },
+      borderRadius: {
+        card: "0.5rem",
+      },
+      spacing: {
+        canvas: "40px",
       },
     },
   },

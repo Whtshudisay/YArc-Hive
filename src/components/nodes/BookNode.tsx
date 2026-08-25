@@ -10,15 +10,11 @@ export default function BookNode({ id, data }: NodeProps<Node<BookNodeData>>) {
   const { book } = data;
 
   return (
-    <article className="archive-card flex w-[320px] gap-3 p-3">
+    <article className="archive-card flex w-[340px] gap-4 p-4">
       <Handle type="target" position={Position.Top} className="archive-handle" />
-      <div className="h-40 w-[92px] shrink-0 overflow-hidden rounded-sm bg-neutral-200">
+      <div className="h-44 w-[100px] shrink-0 overflow-hidden rounded bg-surface-low shadow-sm">
         {book.cover_url ? (
-          <img
-            src={book.cover_url}
-            alt=""
-            className="h-full w-full object-cover"
-          />
+          <img src={book.cover_url} alt="" className="h-full w-full object-cover" />
         ) : (
           <div className="flex h-full items-center justify-center font-mono text-[10px] text-neutral-500">
             NO COVER
@@ -26,15 +22,13 @@ export default function BookNode({ id, data }: NodeProps<Node<BookNodeData>>) {
         )}
       </div>
       <div className="min-w-0 flex-1">
-        <h3 className="font-serif text-lg leading-tight text-neutral-900">
-          {book.title}
-        </h3>
+        <h3 className="font-serif text-xl font-medium leading-tight text-ink">{book.title}</h3>
         <p className="mt-1 font-mono text-[11px] text-neutral-500">
           {book.author || "Unknown author"}
         </p>
         <button
           type="button"
-          className="pill mt-2"
+          className="pill mt-3"
           onClick={() =>
             actions.updateBook(book.id, { status: cycleBookStatus(book.status) })
           }
@@ -46,24 +40,32 @@ export default function BookNode({ id, data }: NodeProps<Node<BookNodeData>>) {
             <button
               key={star}
               type="button"
-              className={`text-sm ${star <= book.rating ? "text-neutral-900" : "text-neutral-300"}`}
+              className="nodrag"
               onClick={() => actions.updateBook(book.id, { rating: star })}
               aria-label={`${star} stars`}
             >
-              ★
+              <span
+                className="material-symbols-outlined text-base"
+                style={{
+                  fontVariationSettings: `'FILL' ${star <= book.rating ? 1 : 0}`,
+                  color: star <= book.rating ? "#181919" : "#c4c7c7",
+                }}
+              >
+                star
+              </span>
             </button>
           ))}
         </div>
         <button
           type="button"
-          className="mt-2 font-mono text-[10px] uppercase tracking-wide text-neutral-500"
+          className="mt-3 font-mono text-[10px] uppercase tracking-wide text-neutral-500"
           onClick={() => setOpen((v) => !v)}
         >
           {open ? "Hide takeaways" : "Takeaways"}
         </button>
         {open && (
           <textarea
-            className="nodrag nowheel mt-1 h-16 w-full resize-none rounded border border-neutral-200 bg-neutral-50 p-1.5 font-serif text-xs outline-none"
+            className="nodrag nowheel mt-1 h-16 w-full resize-none rounded border border-outline/50 bg-surface-low p-2 font-serif text-sm outline-none"
             value={book.notes_markdown}
             placeholder="Key takeaways..."
             onChange={(e) =>
@@ -73,7 +75,7 @@ export default function BookNode({ id, data }: NodeProps<Node<BookNodeData>>) {
         )}
         <button
           type="button"
-          className="mt-2 block font-mono text-[10px] uppercase tracking-wide text-neutral-400 hover:text-neutral-800"
+          className="mt-2 block font-mono text-[10px] uppercase tracking-wide text-neutral-400 hover:text-ink"
           onClick={() => actions.deleteNode(id)}
         >
           Remove

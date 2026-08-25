@@ -390,9 +390,9 @@ export default function App() {
   const [addOpen, setAddOpen] = useState(false);
 
   return (
-    <div className="flex h-screen overflow-hidden bg-canvas">
+    <div className="relative h-screen overflow-hidden bg-canvas">
       <Sidebar onNewEntry={() => setAddOpen(true)} />
-      <div className="relative min-w-0 flex-1">
+      <div className="absolute inset-0">
         <ReactFlowProvider>
           <CanvasApp addOpen={addOpen} setAddOpen={setAddOpen} />
         </ReactFlowProvider>

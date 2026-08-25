@@ -9,7 +9,12 @@ export type ArchiveActions = {
   ) => void;
   updateMedia: (
     id: string,
-    patch: Partial<Pick<MediaItem, "notes_markdown" | "title" | "creator_or_author" | "genre">>,
+    patch: Partial<
+      Pick<
+        MediaItem,
+        "notes_markdown" | "title" | "creator_or_author" | "genre" | "metadata_json"
+      >
+    >,
   ) => void;
   deleteNode: (id: string) => void;
 };

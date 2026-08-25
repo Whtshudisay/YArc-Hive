@@ -469,7 +469,12 @@ export async function updateBook(
 
 export async function updateMedia(
   id: string,
-  patch: Partial<Pick<MediaItem, "notes_markdown" | "title" | "creator_or_author" | "genre">>,
+  patch: Partial<
+    Pick<
+      MediaItem,
+      "notes_markdown" | "title" | "creator_or_author" | "genre" | "metadata_json"
+    >
+  >,
 ): Promise<void> {
   const database = await getDb();
   if (!database) {
@@ -484,8 +489,15 @@ export async function updateMedia(
   if (!current) return;
   const next = { ...current, ...patch };
   await database.execute(
-    `UPDATE media_items SET title = $1, creator_or_author = $2, genre = $3, notes_markdown = $4 WHERE id = $5`,
-    [next.title, next.creator_or_author, next.genre, next.notes_markdown, id],
+    `UPDATE media_items SET title = $1, creator_or_author = $2, genre = $3, notes_markdown = $4, metadata_json = $5 WHERE id = $6`,
+    [
+      next.title,
+      next.creator_or_author,
+      next.genre,
+      next.notes_markdown,
+      next.metadata_json,
+      id,
+    ],
   );
 }
 

@@ -26,12 +26,12 @@ type Props = {
   }) => void;
 };
 
-const KINDS: { id: EntryKind; title: string; hint: string }[] = [
-  { id: "note", title: "Note", hint: "Blank canvas" },
-  { id: "book", title: "Book", hint: "By ISBN/Title" },
-  { id: "video", title: "Video", hint: "Import via URL" },
-  { id: "cinema", title: "Cinema", hint: "Movie or Show" },
-  { id: "article", title: "Article", hint: "Web clip" },
+const KINDS: { id: EntryKind; title: string; hint: string; icon: string }[] = [
+  { id: "note", title: "Note", hint: "Blank canvas", icon: "edit_note" },
+  { id: "book", title: "Book", hint: "By ISBN/Title", icon: "menu_book" },
+  { id: "video", title: "Video", hint: "Import via URL", icon: "videocam" },
+  { id: "cinema", title: "Cinema", hint: "Movie or Show", icon: "movie" },
+  { id: "article", title: "Article", hint: "Web clip", icon: "article" },
 ];
 
 export default function AddToArchiveModal({
@@ -68,44 +68,60 @@ export default function AddToArchiveModal({
   if (!open) return null;
 
   return (
-    <div className="absolute inset-0 z-40 flex items-center justify-center bg-black/20 p-6">
-      <div className="flex max-h-[85vh] w-full max-w-3xl overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-card">
-        <div className="w-56 border-r border-neutral-100 p-4">
-          <h2 className="font-serif text-3xl">Add to Archive</h2>
+    <div className="absolute inset-0 z-40 flex items-center justify-center bg-black/15 p-6 backdrop-blur-[2px]">
+      <div className="flex max-h-[85vh] w-full max-w-4xl overflow-hidden rounded-xl border border-outline/40 bg-white shadow-card-hover">
+        <div className="w-[240px] shrink-0 border-r border-outline/30 bg-surface-low p-6">
+          <div className="mb-6 flex items-center gap-3">
+            <div className="flex h-9 w-9 items-center justify-center rounded-full border border-outline bg-white font-serif text-sm">
+              ◈
+            </div>
+            <div>
+              <div className="font-serif text-xl leading-none text-ink">Workspace</div>
+              <div className="mt-1 font-mono text-[10px] uppercase tracking-widest text-neutral-500">
+                Personal Archive
+              </div>
+            </div>
+          </div>
+          <h2 className="font-serif text-[32px] font-medium leading-tight text-ink">
+            Add to Archive
+          </h2>
           <p className="mt-2 font-mono text-[10px] uppercase tracking-wide text-neutral-500">
             Select a media type to create a new entry.
           </p>
-          <div className="mt-4 space-y-2">
+          <div className="mt-6 space-y-2">
             {KINDS.map((item) => (
               <button
                 key={item.id}
                 type="button"
                 onClick={() => setKind(item.id)}
-                className={`w-full rounded-md border px-3 py-2 text-left ${
+                className={`flex w-full items-start gap-3 rounded-lg border px-3 py-3 text-left transition-colors ${
                   kind === item.id
-                    ? "border-neutral-800 bg-white shadow-sm"
-                    : "border-transparent hover:bg-neutral-50"
+                    ? "border-ink bg-white shadow-card"
+                    : "border-transparent hover:bg-white/70"
                 }`}
               >
-                <div className="font-serif text-base">{item.title}</div>
-                <div className="font-mono text-[10px] text-neutral-500">
-                  {item.hint}
-                </div>
+                <span className="material-symbols-outlined mt-0.5 text-neutral-600">
+                  {item.icon}
+                </span>
+                <span>
+                  <div className="font-serif text-base text-ink">{item.title}</div>
+                  <div className="font-mono text-[10px] text-neutral-500">{item.hint}</div>
+                </span>
               </button>
             ))}
           </div>
         </div>
-        <div className="flex flex-1 flex-col p-6">
+        <div className="flex min-h-[420px] flex-1 flex-col p-8">
           {kind === "note" && (
             <>
               <input
-                className="font-serif text-2xl outline-none"
+                className="w-full bg-transparent font-serif text-[32px] font-medium text-ink outline-none placeholder:text-neutral-300"
                 placeholder="Untitled Note"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
               />
               <textarea
-                className="mt-4 flex-1 resize-none font-mono text-sm text-neutral-600 outline-none"
+                className="mt-4 flex-1 resize-none bg-transparent font-serif text-lg italic leading-relaxed text-neutral-600 outline-none placeholder:not-italic placeholder:text-neutral-300"
                 placeholder="Start typing..."
                 value={body}
                 onChange={(e) => setBody(e.target.value)}
@@ -113,7 +129,7 @@ export default function AddToArchiveModal({
             </>
           )}
           {kind === "book" && (
-            <div className="space-y-3">
+            <div className="space-y-4">
               <Field label="Title" value={title} onChange={setTitle} />
               <Field label="Author" value={author} onChange={setAuthor} />
               <Field label="ISBN" value={isbn} onChange={setIsbn} />
@@ -121,14 +137,14 @@ export default function AddToArchiveModal({
             </div>
           )}
           {(kind === "video" || kind === "article") && (
-            <div className="space-y-3">
+            <div className="space-y-4">
               <Field label="URL" value={url} onChange={setUrl} />
               <Field label="Title (optional)" value={title} onChange={setTitle} />
               <Field label="Creator / publication" value={author} onChange={setAuthor} />
             </div>
           )}
           {kind === "cinema" && (
-            <div className="space-y-3">
+            <div className="space-y-4">
               <Field label="Title" value={title} onChange={setTitle} />
               <Field label="Director" value={author} onChange={setAuthor} />
               <Field label="Year" value={year} onChange={setYear} />
@@ -136,13 +152,13 @@ export default function AddToArchiveModal({
               <Field label="Poster URL" value={cover} onChange={setCover} />
             </div>
           )}
-          <div className="mt-auto flex justify-end gap-2 pt-6">
+          <div className="mt-auto flex justify-end gap-2 pt-8">
             <button type="button" className="pill-btn" onClick={onClose}>
               Cancel
             </button>
             <button
               type="button"
-              className="rounded-full bg-neutral-800 px-4 py-1.5 font-mono text-xs text-white"
+              className="pill-btn-primary"
               onClick={() => {
                 if (kind === "note") {
                   onCreateNote(title || "Untitled Note", body);
@@ -203,7 +219,7 @@ function Field({
         {label}
       </span>
       <input
-        className="mt-1 w-full border-b border-neutral-200 bg-transparent py-1 font-serif text-lg outline-none"
+        className="mt-1 w-full border-b border-outline bg-transparent py-2 font-serif text-xl text-ink outline-none"
         value={value}
         onChange={(e) => onChange(e.target.value)}
       />

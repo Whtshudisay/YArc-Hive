@@ -1,0 +1,42 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --canvas: #e8e7e3;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: var(--canvas);
+  color: #171717;
+  font-family: "Playfair Display", Georgia, serif;
+}
+
+.react-flow__node {
+  font-family: inherit;
+}
+
+@layer components {
+  .archive-card {
+    @apply rounded-md border border-neutral-200/80 bg-white shadow-card;
+  }
+
+  .archive-handle {
+    @apply !h-2.5 !w-2.5 !border !border-neutral-400 !bg-white;
+  }
+
+  .pill {
+    @apply rounded-full border border-neutral-800 px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-wide;
+  }
+
+  .pill-btn {
+    @apply rounded-full border border-neutral-800 bg-white px-3 py-1 font-mono text-xs hover:bg-neutral-50;
+  }
+}

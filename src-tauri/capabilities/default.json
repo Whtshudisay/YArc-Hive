@@ -1,0 +1,17 @@
+{
+  "identifier": "default",
+  "description": "Default capabilities for Personal Archive",
+  "windows": ["main"],
+  "permissions": [
+    "core:default",
+    "dialog:default",
+    "sql:default",
+    "sql:allow-execute",
+    "sql:allow-select",
+    "sql:allow-load",
+    {
+      "identifier": "sql:allow-load",
+      "allow": [{ "url": "sqlite:archive.db" }]
+    }
+  ]
+}
